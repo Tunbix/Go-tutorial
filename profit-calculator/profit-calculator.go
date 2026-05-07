@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+
+	
 )
 
 func main() {
@@ -22,6 +24,7 @@ func main() {
 	outputText("Tax Rate: ")
 	fmt.Scan(&taxRate)
 
+	calculateEarings(revenue, expenses, taxRate)
 	revenueBeforeTax := revenue - expenses
 	revenueAfterTax := revenueBeforeTax * (1 - taxRate/100)
 	incomeRatio := revenueBeforeTax / revenueAfterTax
@@ -38,8 +41,20 @@ func main() {
 
 	fmt.Print(formattedBT, formattedPT, formattedTR)
 
-	func outputText(text string) {
-		fmt.Print(text)
+	
 
-	}
+	
 }
+
+func outputText(text string)  {
+		fmt.Print(text)
+}
+
+func calculateEarings(revenue, expenses, taxRate float64) (float64, float64, float64) {
+		bt := revenue - expenses
+		pt := bt * (1 - taxRate/100)
+		tr := bt / pt
+
+		return bt, pt, tr 
+	}
+
