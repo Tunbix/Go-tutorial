@@ -1,35 +1,14 @@
 package main
 
-import(
+import (
 	"fmt"
-	"time"
+	
+
+	"example.com/struct-class/user"
 )
 
-type user struct{
-	firstName string
-	lastName string
-	birthdate string
-	createdAt time.Time
-}
 
-func (u user) outputUserDetails()  {
-	
-	fmt.Println(u.firstName, u.lastName, u.birthdate)
-}
 
-func (u *user) clearUserName()  {
-	u.firstName = ""
-	u.lastName =""
-}
-
-func newUser(firstName, lastName, birthdate string) user  {
-	return  user{
-		firstName: firstName,
-		lastName: lastName,
-		birthdate: birthdate,
-		createdAt: time.Now(),
-	}
-}
 
 func main() {
 
@@ -37,17 +16,28 @@ func main() {
 	userLastName := getUserData("Please enter your last name: ")
 	userBirthdate := getUserData("Please enter your birthdaten (MM/DD/YYYY): ")
 
-	var appUser user
+	var appUser *user.User
 
 
-	appUser = newUser(userFirstName, userLastName, userBirthdate)
+	appUser, err := user.New(userFirstName, userLastName, userBirthdate)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	admin := user.NewAdmin("test@example.com", "test123")
+
+	admin.OutputUserDetails()
+	admin.ClearUserName()
+	admin.OutputUserDetails()
 	
 
 	//... do something awesome with that gathered data!
 
-	appUser.outputUserDetails()
-	appUser.clearUserName()
-	appUser.outputUserDetails()
+	appUser.OutputUserDetails()
+	appUser.ClearUserName()
+	appUser.OutputUserDetails()
 
 }
 
@@ -57,7 +47,7 @@ func getUserData(promptText string) string {
 
 	fmt.Print(promptText)
 	var value string
-	fmt.Scan(&value)
+	fmt.Scanln(&value)
 	return value
 	
 }
