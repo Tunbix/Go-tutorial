@@ -7,7 +7,7 @@ import (
 	"example.com/struct-class/user"
 )
 
-
+ 
 
 
 func main() {

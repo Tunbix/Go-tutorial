@@ -1,18 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"bufio"
+	"fmt"
 	"os"
 	"strings"
 
-	"example.com/note/note"
 	"example.com/note/change"
+	"example.com/note/note"
 )
 
 type saver interface {
 	Save() error
 }
+
+type outputter interface {
+	Display()
+	saver
+}
+
 func main() {
 	title, context := getNoteData()
 	todoText := getUserInput("Todo text:")
@@ -24,40 +30,39 @@ func main() {
 		return
 	}
 
-	 userNote, err := note.New(title, context)
+	userNote, err := note.New(title, context)
 
-	if err != nil { 
+	if err != nil {
 		fmt.Print(err)
 		return
 	}
 
-	todo.Display()
-	err = todo.Save()
+	err = outputData(todo)
+
+	if err != nil {
+		return
+	}
+
+	outputData(userNote)
+
+}
+
+func outputData(data outputter) error {
+	data.Display()
+	return saveData(data)
+}
+
+func saveData(data saver) error {
+	err := data.Save()
 
 	if err != nil {
 		fmt.Println("Saving the todo failed.")
-		return
+		return err
 	}
 	fmt.Println("Saving the todo succeeded!")
-
-
-
-	userNote.Display()
-	err = userNote.Save()
-
-	if err != nil {
-		fmt.Println("Saving the note failed.")
-		return
-	}
-	fmt.Println("Saving the note succeeded!")
-
+	return nil
 }
 
-func getTodoData() (string) {
-	return getUserInput("Todo text:")
-
-	
-}
 func getNoteData() (string, string) {
 	title := getUserInput("Note title:")
 
@@ -68,10 +73,10 @@ func getNoteData() (string, string) {
 
 func getUserInput(prompt string) string {
 	fmt.Printf("%v", prompt)
-	
-	reader :=  bufio.NewReader(os.Stdin)
 
-	text, err :=  reader.ReadString('\n')
+	reader := bufio.NewReader(os.Stdin)
+
+	text, err := reader.ReadString('\n')
 
 	if err != nil {
 		return ""
